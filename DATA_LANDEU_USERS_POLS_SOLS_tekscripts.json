@@ -3,13 +3,13 @@
         {
             "Nome": "FXZGHS1",
             "Id": "4176787796",
-            "DataVencimento": "2025/03/10",  // Adicionando o ano
+            "DataVencimento": "2025/03/10",
             "Script": "loadstring(game:HttpGet('https://raw.githubusercontent.com/DATEDATEDATEDATEDATE/Encrypted_AutoFarm_LanderSecurity_ProxyLayer_PasswordVault_Advanced_IPS_FoxTekScripts_Deployment_V2/refs/heads/main/AutoFarm__LanderSecurity__EncryptedPasswordManager__NativeLayer_IPS_WAS_FoxTek_AdvancedScripts.lua'))()"
         },
         {
             "Nome": "player2",
             "Id": "234567890",
-            "DataVencimento": "2025/01/15",  // Adicionando o ano
+            "DataVencimento": "2025/01/15",
             "Script": "loadstring(game:HttpGet('https://example.com/script'))()"
         }
     ]
