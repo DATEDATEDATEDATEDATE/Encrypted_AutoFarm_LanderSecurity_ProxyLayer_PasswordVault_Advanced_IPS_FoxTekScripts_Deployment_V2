@@ -1,0 +1,16 @@
+[
+    {
+        "Name": "player1",
+        "Id": "123456789",
+        "Jogo": "987654321",
+        "Data": "01/10",
+        "Script": "loadstring(game:HttpGet('https://pastebin.com/raw/NhHbxr3p'))()"
+    },
+    {
+        "Name": "player2",
+        "Id": "234567890",
+        "Jogo": "876543210",
+        "Data": "01/15",
+        "Script": "loadstring(game:HttpGet('https://pastebin.com/raw/NhHbxr3p'))()"
+    }
+]
