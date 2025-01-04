@@ -1,10 +1,10 @@
 [
     {
-        "Name": "player1",
-        "Id": "123456789",
-        "Jogo": "987654321",
+        "Name": "FXZGHS1",
+        "Id": "4176787796",
+        "Jogo": "guerra subterrânea",
         "Data": "01/10",
-        "Script": "loadstring(game:HttpGet('https://pastebin.com/raw/NhHbxr3p'))()"
+        "Script": "https://raw.githubusercontent.com/DATEDATEDATEDATEDATE/Encrypted_AutoFarm_LanderSecurity_ProxyLayer_PasswordVault_Advanced_IPS_FoxTekScripts_Deployment_V2/refs/heads/main/AutoFarm__LanderSecurity__EncryptedPasswordManager__NativeLayer_IPS_WAS_FoxTek_AdvancedScripts.lua"
     },
     {
         "Name": "player2",
