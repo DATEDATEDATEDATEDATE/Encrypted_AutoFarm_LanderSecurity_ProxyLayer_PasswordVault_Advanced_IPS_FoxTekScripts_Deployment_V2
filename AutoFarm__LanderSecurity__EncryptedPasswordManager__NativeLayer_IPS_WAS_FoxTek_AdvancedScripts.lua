@@ -1,4 +1,3 @@
--- Variável de controle no começo
 local jogadorMorto = false
 
 -- Função para matar o jogador uma vez
