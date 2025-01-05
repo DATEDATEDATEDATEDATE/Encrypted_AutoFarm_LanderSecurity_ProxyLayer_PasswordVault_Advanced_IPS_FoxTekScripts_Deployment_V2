@@ -1,17 +1,25 @@
+-- Variável de controle no começo
+local jogadorMorto = false
 
--- Verificar se o script já foi executado
-local executed = false
-
--- Função para executar o script uma única vez
-local function executeOnce()
-    if not executed then
-        executed = true  -- Marca como executado
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/DATEDATEDATEDATEDATE/Encrypted_AutoFarm_LanderSecurity_ProxyLayer_PasswordVault_Advanced_IPS_FoxTekScripts_Deployment_V2/refs/heads/main/KILLAURAsuportesGuerraSUB.lua"))()
+-- Função para matar o jogador uma vez
+function matarJogador(jogador)
+    if not jogadorMorto then
+        -- Mata o jogador
+        jogador:TakeDamage(jogador.Health)  -- Diminui a saúde do jogador até 0
+        jogadorMorto = true  -- Marca que o jogador foi morto
+        print(jogador.Name .. " foi morto!")
+    else
+        print("inicialização de farm iniciada v2")
     end
 end
 
--- Chama a função para executar o script
-executeOnce()
+-- Conectando o evento quando um jogador entra no jogo
+game.Players.PlayerAdded:Connect(function(player)
+    -- Matar o jogador quando ele entrar no jogo
+    matarJogador(player)
+end)
+
+-- O resto do seu código vai aqui, abaixo
 
 -- Variáveis iniciais
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -119,7 +127,7 @@ local function findClosestLandAvoidingEnemies()
             end
 
             -- Só escolher a terra se não houver inimigos próximos
-            if closestEnemyDistance > 30 and distance < minDistance then
+            if closestEnemyDistance > 1 and distance < minDistance then
                 closestLand = item
                 minDistance = distance
             end
@@ -212,3 +220,187 @@ end
 
 -- Iniciar escavação
 restartProcess()
+
+-- Resetar configurações anteriores, se existirem
+local connections = getgenv().configs and getgenv().configs.connection
+if connections then
+    local Disable = configs.Disable
+    for _, v in pairs(connections) do
+        if v and typeof(v) == "RBXScriptConnection" then
+            v:Disconnect()
+        end
+    end
+    if Disable then
+        Disable:Fire()
+        Disable:Destroy()
+    end
+    table.clear(getgenv().configs)
+end
+
+-- Nova configuração
+local Disable = Instance.new("BindableEvent")
+getgenv().configs = {
+    connections = {},
+    Disable = Disable,
+    Size = Vector3.new(50, 50, 50),  -- Aumentar o raio de detecção
+    DeathCheck = true,
+    Targeting = "Distance",  -- Priorizar pela distância
+    IgnoreAllies = true,     -- Ignorar aliados ou mesma equipe
+    AggressiveAttack = true  -- Agressividade no ataque
+}
+
+local Players = cloneref(game:GetService("Players"))
+local RunService = cloneref(game:GetService("RunService"))
+local lp = Players.LocalPlayer
+local Run = true
+local Ignorelist = OverlapParams.new()
+Ignorelist.FilterType = Enum.RaycastFilterType.Include
+
+-- Funções auxiliares
+local function getchar(plr)
+    local plr = plr or lp
+    return plr and plr.Character
+end
+
+local function gethumanoid(plr)
+    local char = plr:IsA("Model") and plr or getchar(plr)
+    return char and char:FindFirstChildWhichIsA("Humanoid")
+end
+
+local function IsAlive(Humanoid)
+    return Humanoid and Humanoid.Health > 0
+end
+
+local function GetTouchInterest(Tool)
+    return Tool and Tool:FindFirstChildWhichIsA("TouchTransmitter", true)
+end
+
+local function GetCharacters(LocalPlayerChar)
+    local Characters = {}
+    for _, v in pairs(Players:GetPlayers()) do
+        if v.Character and v.Character ~= LocalPlayerChar then
+            -- Ignorar aliados ou mesma equipe, se configurado
+            if not getgenv().configs.IgnoreAllies or v.Team ~= lp.Team then
+                table.insert(Characters, v.Character)
+            end
+        end
+    end
+    return Characters
+end
+
+local function Attack(Tool, TouchPart, ToTouch)
+    if Tool and Tool:IsDescendantOf(workspace) then
+        Tool:Activate()
+        firetouchinterest(TouchPart, ToTouch, 1)
+        firetouchinterest(TouchPart, ToTouch, 0)
+    end
+end
+
+local function GetPriorityTarget(characters, LocalPlayerChar)
+    local target = nil
+    local minValue = math.huge
+
+    for _, enemy in ipairs(characters) do
+        if enemy:FindFirstChild("HumanoidRootPart") then
+            local humanoid = gethumanoid(enemy)
+            if IsAlive(humanoid) then
+                local distancia = (LocalPlayerChar.HumanoidRootPart.Position - enemy.HumanoidRootPart.Position).Magnitude
+                local value = getgenv().configs.Targeting == "Distance" and distancia or humanoid.Health
+
+                if value < minValue then
+                    minValue = value
+                    target = enemy
+                end
+            end
+        end
+    end
+
+    return target
+end
+
+-- Conexão para desativar Kill Aura
+table.insert(getgenv().configs.connections, Disable.Event:Connect(function()
+    Run = false
+end))
+
+-- Configurações principais
+local raioDeDeteccao = 60  -- Aumentar o raio de detecção
+local killAuraTempo = 0.02  -- Reduzir o tempo entre ataques
+
+-- Função para resetar variáveis e estados do script
+local function ResetScript()
+    -- Resetando a variável Run para true
+    Run = true
+    
+    -- Resetando as configurações novamente
+    getgenv().configs = {
+        connections = {},
+        Disable = Disable,
+        Size = Vector3.new(50, 50, 50),  -- Aumentar o raio de detecção
+        DeathCheck = true,
+        Targeting = "Distance",  -- Priorizar pela distância
+        IgnoreAllies = true,     -- Ignorar aliados ou mesma equipe
+        AggressiveAttack = true  -- Agressividade no ataque
+    }
+
+    -- Reconfigura a parte de desativação
+    local Disable = Instance.new("BindableEvent")
+    table.insert(getgenv().configs.connections, Disable.Event:Connect(function()
+        Run = false
+    end))
+
+    -- Continuar com o loop principal após reiniciar
+    spawn(ResetScript)  -- Reinicia o script em 5 minutos (ou o intervalo desejado)
+end
+
+-- Iniciar o reset automático
+spawn(ResetScript)
+
+-- Loop principal
+while Run do
+    local char = getchar()
+    if char and IsAlive(gethumanoid(char)) then
+        local Characters = GetCharacters(char)
+        local targets = {}
+
+        -- Identificar todos os inimigos dentro do raio de detecção
+        for _, enemy in ipairs(Characters) do
+            if enemy and enemy:FindFirstChild("HumanoidRootPart") then
+                local distancia = (char.HumanoidRootPart.Position - enemy.HumanoidRootPart.Position).Magnitude
+
+                if distancia <= raioDeDeteccao then
+                    table.insert(targets, enemy)
+                end
+            end
+        end
+
+        -- Equipando o segundo ou terceiro Tool, se disponível
+        local inventory = lp.Backpack:GetChildren()
+        local itemEquipped = inventory[2] or inventory[3]  -- Equipar o 2º ou 3º item
+        if itemEquipped and itemEquipped:IsA("Tool") then
+            itemEquipped.Parent = char
+        end
+
+        -- Ataque a todos os inimigos dentro do raio de detecção
+        for _, target in ipairs(targets) do
+            local Tool = char:FindFirstChildWhichIsA("Tool")
+            if Tool then
+                local TouchInterest = GetTouchInterest(Tool)
+                if TouchInterest then
+                    local TouchPart = TouchInterest.Parent
+                    Ignorelist.FilterDescendantsInstances = targets
+
+                    -- Realizar o ataque a todos os inimigos
+                    local InstancesInBox = workspace:GetPartBoundsInBox(TouchPart.CFrame, TouchPart.Size + getgenv().configs.Size, Ignorelist)
+                    for _, v in ipairs(InstancesInBox) do
+                        local Character = v:FindFirstAncestorWhichIsA("Model")
+                        if Character and table.find(targets, Character) then
+                            Attack(Tool, TouchPart, v)
+                        end
+                    end
+                end
+            end
+        end
+    end
+    RunService.Heartbeat:Wait(killAuraTempo)
+end
