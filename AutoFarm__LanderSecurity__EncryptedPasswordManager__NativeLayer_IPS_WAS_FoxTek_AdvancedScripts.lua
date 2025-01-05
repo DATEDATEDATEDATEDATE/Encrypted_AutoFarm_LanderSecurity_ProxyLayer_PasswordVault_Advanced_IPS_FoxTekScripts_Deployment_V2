@@ -1,24 +1,4 @@
-local jogadorMorto = false
 
--- Função para matar o jogador uma vez
-function matarJogador(jogador)
-    if not jogadorMorto then
-        -- Mata o jogador
-        jogador:TakeDamage(jogador.Health)  -- Diminui a saúde do jogador até 0
-        jogadorMorto = true  -- Marca que o jogador foi morto
-        print(jogador.Name .. " foi morto!")
-    else
-        print("inicialização de farm iniciada v2")
-    end
-end
-
--- Conectando o evento quando um jogador entra no jogo
-game.Players.PlayerAdded:Connect(function(player)
-    -- Matar o jogador quando ele entrar no jogo
-    matarJogador(player)
-end)
-
--- O resto do seu código vai aqui, abaixo
 
 -- Variáveis iniciais
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
